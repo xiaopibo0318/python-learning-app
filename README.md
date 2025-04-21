@@ -15,34 +15,55 @@
 # 當前資料夾架構如下
 
 assets/
-├── data/       # 存放章節內容與測驗題目的 JSON 檔案
+├── data/
 │   ├── ch1/
 │   │   ├── contents.json
 │   │   └── quiz.json
 │   └── ch2/
-├── fonts/      # 自訂中文字體
+│       # 存放章節內容與測驗題目的 JSON 檔案
+├── fonts/
 │   └── GenSenRounded2-M.ttc
-├── images/     # 圖片資源（教學插圖、按鈕圖示等）
+│       # 自訂中文字體
+├── images/
 │   ├── ch1/
 │   │   ├── variable_example.png
 │   │   └── dataType01.png
 │   ├── ch2/
 │   └── icons/
+│       # 圖片資源（教學插圖、按鈕圖示等）
 
 lib/
-├── data/                         # 純資料邏輯（章節註冊、載入器等）
+├── data/
 │   ├── chapter_data_loader.dart
 │   ├── chapter_registry.dart
 │   ├── content_registry.dart
 │   ├── ch1/slides.dart
 │   └── glossary/ch1_terms.dart
-├── models/                       # 資料模型（Chapter、Question、SlideContent）
-├── screens/                      # 畫面邏輯（首頁、章節、測驗、圖鑑）
+│       # 純資料邏輯（章節註冊、載入器等）
+├── models/
+│   ├── chapter.dart
+│   ├── slide_content.dart
+│   └── question.dart
+│       # 資料模型（Chapter、Question、SlideContent）
+├── screens/
 │   ├── home/
+│   │   └── home_screen.dart
 │   ├── chapter/
+│   │   ├── chapter_screen.dart
+│   │   ├── chapter_content_page.dart
+│   │   └── presentation_page.dart
 │   ├── quiz/
+│   │   ├── quiz_screen.dart
+│   │   └── result_dialog.dart
 │   └── encyclopedia/
-├── widgets/                      # 可重用組件（按鈕、卡片、標題等）
-└── main.dart                     # App 入口點
-
+│       └── encyclopedia_screen.dart
+│       # 畫面邏輯（首頁、章節、測驗、圖鑑）
+├── widgets/
+│   ├── chapter_tile.dart
+│   ├── quiz_option_button.dart
+│   ├── slide_card.dart
+│   └── section_title.dart
+│       # 可重用 UI 組件（按鈕、卡片、標題等）
+└── main.dart
+    # App 入口
 
