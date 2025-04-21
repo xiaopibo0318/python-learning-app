@@ -1,0 +1,19 @@
+[
+  {
+    "topic": "變數",
+    "description": "變數是用來儲存資料的容器，例如：x = 10。"
+  },
+  {
+    "topic": "資料型態 I",
+    "description": "介紹int、str、float。"
+  },
+  {
+    "topic": "print() 使用",
+    "description": "如何輸出「bling bling 水晶晶，天上掉下小星星」。"
+  },
+  {
+    "topic": "input() 使用",
+    "description": "所以我說，如何輸入呢？"
+  },
+  { "topic": "註解", "description": "有人想要寫筆記嗎？" }
+]
