@@ -12,40 +12,39 @@
 - ✅ 自訂字體、手寫風格介面
 - ✅ Flutter 多平台支援（Android / Web）
 
-# 當前資料夾架構如下
+<summary><strong>📁 專案資料夾結構</strong></summary>
+
+<pre>
 
 assets/
-├── data/
+├── data/              存放章節內容與測驗題目的 JSON
 │   ├── ch1/
 │   │   ├── contents.json
 │   │   └── quiz.json
 │   └── ch2/
-│       # 存放章節內容與測驗題目的 JSON 檔案
-├── fonts/
+├── fonts/             自訂中文字體
 │   └── GenSenRounded2-M.ttc
-│       # 自訂中文字體
-├── images/
+├── images/            教學插圖與介面圖示
 │   ├── ch1/
 │   │   ├── variable_example.png
 │   │   └── dataType01.png
 │   ├── ch2/
 │   └── icons/
-│       # 圖片資源（教學插圖、按鈕圖示等）
 
 lib/
-├── data/
+├── data/              純資料邏輯（載入 JSON / 註冊表）
 │   ├── chapter_data_loader.dart
 │   ├── chapter_registry.dart
 │   ├── content_registry.dart
-│   ├── ch1/slides.dart
-│   └── glossary/ch1_terms.dart
-│       # 純資料邏輯（章節註冊、載入器等）
-├── models/
+│   ├── ch1/
+│   │   └── slides.dart
+│   └── glossary/
+│       └── ch1_terms.dart
+├── models/            資料模型定義（Chapter、Question、Slide）
 │   ├── chapter.dart
-│   ├── slide_content.dart
-│   └── question.dart
-│       # 資料模型（Chapter、Question、SlideContent）
-├── screens/
+│   ├── question.dart
+│   └── slide_content.dart
+├── screens/           各主要頁面邏輯
 │   ├── home/
 │   │   └── home_screen.dart
 │   ├── chapter/
@@ -57,13 +56,12 @@ lib/
 │   │   └── result_dialog.dart
 │   └── encyclopedia/
 │       └── encyclopedia_screen.dart
-│       # 畫面邏輯（首頁、章節、測驗、圖鑑）
-├── widgets/
+├── widgets/           可重用 UI 組件（按鈕、卡片、標題）
 │   ├── chapter_tile.dart
 │   ├── quiz_option_button.dart
 │   ├── slide_card.dart
 │   └── section_title.dart
-│       # 可重用 UI 組件（按鈕、卡片、標題等）
-└── main.dart
-    # App 入口
+└── main.dart          App 進入點
+
+</pre>
 
