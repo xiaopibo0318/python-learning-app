@@ -6,6 +6,7 @@ import 'firebase_options.dart'; // Firebase CLI 會產生這個檔案
 
 void main() async {
   AppLogger.init();
+  AppLogger.chapter.info('🚀 Logger 測試成功！');
   WidgetsFlutterBinding.ensureInitialized(); // 初始化綁定
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const APCSApp());

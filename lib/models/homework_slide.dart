@@ -7,7 +7,7 @@ class HomeworkSlide {
   HomeworkSlide({
     this.imageAsset,
     required this.description,
-    this.inputExample,
-    this.outputExample,
+    this.inputExample = "",
+    this.outputExample = "",
   });
 }

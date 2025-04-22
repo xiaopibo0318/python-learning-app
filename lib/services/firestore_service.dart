@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/chapter.dart';
 import '../models/question.dart';
+import '../models/slide_content.dart';
 import '../models/homework_slide.dart';
+import '../utils/logger.dart';
 
 class FirestoreService {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -16,25 +18,8 @@ class FirestoreService {
 
         final contentsSnap = await doc.reference.collection('contents').get();
         final quizzesSnap = await doc.reference.collection('quizzes').get();
-        final homeworksSnap = await doc.reference.collection('homeworks').get();
-
-        HomeworkConfig? homeworkConfig;
-        if (homeworksSnap.docs.isNotEmpty) {
-          homeworkConfig = HomeworkConfig(
-            slides:
-                homeworksSnap.docs
-                    .map(
-                      (h) => HomeworkSlide(
-                        description: h['title'],
-                        inputExample: h['inputExample'],
-                        outputExample: h['outputExample'],
-                      ),
-                    )
-                    .toList(),
-            submitUrl: homeworksSnap.docs.first.data()['submitUrl'] ?? '',
-          );
-        }
         return Chapter(
+          id: data["id"] ?? "0",
           title: data['title'] ?? '未命名章節',
           isUnlocked: data['unlocked'] ?? false,
           contents:
@@ -56,9 +41,61 @@ class FirestoreService {
                     ),
                   )
                   .toList(),
-          homeworkConfig: homeworkConfig,
         );
       }).toList(),
     );
+  }
+
+  //讀取PresentationPage
+  static Future<List<SlideContent>> fetchSlides(String topic) async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('chapters')
+            .doc('ch1')
+            .collection('contents')
+            .where('topic', isEqualTo: topic)
+            .limit(1)
+            .get();
+
+    if (snapshot.docs.isEmpty) {
+      AppLogger.chapter.warning('❗ 沒有找到 topic：$topic');
+      return [];
+    }
+
+    final data = snapshot.docs.first.data();
+    final List slidesRaw = data['slides'] ?? [];
+
+    return slidesRaw
+        .map((e) => SlideContent(text: e['text'], imageAsset: e['imageUrl']))
+        .toList();
+  }
+
+  static Future<String> fetchSubmitUrl(String chapterId) async {
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('chapters')
+            .doc('ch${chapterId}')
+            .get();
+
+    return doc.data()?['submitUrl'] ?? '';
+  }
+
+  static Future<List<HomeworkSlide>> fetchHomeworks(String chapterId) async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('chapters')
+            .doc('ch${chapterId}')
+            .collection('homeworks')
+            .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return HomeworkSlide(
+        description: data['description'] ?? '',
+        inputExample: data['inputExample'] ?? '',
+        outputExample: data['outputExample'] ?? '',
+        imageAsset: data['imageAsset'] ?? '',
+      );
+    }).toList();
   }
 }

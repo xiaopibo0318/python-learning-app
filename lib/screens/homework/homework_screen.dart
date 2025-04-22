@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/homework_slide.dart';
 import '../../widgets/code_block.dart';
+import '../../services/firestore_service.dart';
 
 class HomeworkScreen extends StatefulWidget {
-  final String title;
-  final List<HomeworkSlide> slides;
+  final String chapterId; // 用章節 ID 來讀取對應作業
   final String submitUrl; // Google 表單連結
 
   const HomeworkScreen({
     super.key,
-    required this.title,
-    required this.slides,
+    required this.chapterId,
     required this.submitUrl,
   });
 
@@ -20,33 +19,62 @@ class HomeworkScreen extends StatefulWidget {
 }
 
 class _HomeworkScreenState extends State<HomeworkScreen> {
+  List<HomeworkSlide> slides = [];
   int currentPage = 0;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHomework();
+  }
+
+  Future<void> _loadHomework() async {
+    final data = await FirestoreService.fetchHomeworks(widget.chapterId);
+    setState(() {
+      slides = data;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final slide = widget.slides[currentPage];
-    final isLastPage = currentPage == widget.slides.length - 1;
+    if (isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (slides.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('作業')),
+        body: const Center(child: Text('尚未有作業內容')),
+      );
+    }
+
+    final slide = slides[currentPage];
+    final isLastPage = currentPage == slides.length - 1;
 
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.title} - 作業')),
+      appBar: AppBar(title: Text('${widget.chapterId} - 作業')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (slide.imageAsset != null)
-                Center(child: Image.asset(slide.imageAsset!)),
+              if (slide.imageAsset != null && slide.imageAsset!.isNotEmpty)
+                Center(child: Image.network(slide.imageAsset!)),
               const SizedBox(height: 16),
               Text(slide.description, style: const TextStyle(fontSize: 18)),
-              if (slide.inputExample != null) ...[
+              if (slide.inputExample != null &&
+                  slide.inputExample!.isNotEmpty) ...[
                 CodeBlock(
                   title: '🔹 Input 範例',
                   content: slide.inputExample!,
                   backgroundColor: Colors.blue.shade50,
                 ),
               ],
-              if (slide.outputExample != null) ...[
+              if (slide.outputExample != null &&
+                  slide.outputExample!.isNotEmpty) ...[
                 CodeBlock(
                   title: '🔹 Output 範例',
                   content: slide.outputExample!,
@@ -74,7 +102,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                 )
                 : TextButton(
                   onPressed:
-                      currentPage < widget.slides.length - 1
+                      currentPage < slides.length - 1
                           ? () => setState(() => currentPage++)
                           : null,
                   child: const Text('下一題 →'),

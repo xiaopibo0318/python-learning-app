@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import '../models/chapter.dart';
-import '../screens/chapter/presentation_page.dart';
-import '../data/content_registry.dart';
+import '../../models/chapter.dart'; // 假設 Content 模型
 
 class ChapterContentTile extends StatelessWidget {
   final Content content;
+  final VoidCallback onTap;
 
-  const ChapterContentTile({super.key, required this.content});
+  const ChapterContentTile({
+    super.key,
+    required this.content,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +21,7 @@ class ChapterContentTile extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          final slides = ContentRegistry.getSlides(content.topic);
-          if (slides.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('⚠️ ${content.topic} 尚未設定內容')),
-            );
-            return;
-          }
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (_) => PresentationPage(title: content.topic, slides: slides),
-            ),
-          );
-        },
+        onTap: onTap,
         child: Card(
           elevation: 3,
           shape: RoundedRectangleBorder(
@@ -57,7 +45,6 @@ class ChapterContentTile extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'GenSen',
                 fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w500,
                 fontSize: descSize,
               ),
             ),

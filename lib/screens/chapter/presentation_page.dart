@@ -38,11 +38,19 @@ class _PresentationPageState extends State<PresentationPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (slide.imageAsset != null)
-                        Image.asset(
+                      if (slide.imageAsset != null &&
+                          slide.imageAsset!.isNotEmpty)
+                        Image.network(
                           slide.imageAsset!,
                           width: screenWidth * 0.8,
                           fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const CircularProgressIndicator();
+                          },
+                          errorBuilder:
+                              (context, error, stackTrace) =>
+                                  const Text('❌ 圖片載入失敗'),
                         ),
                       if (slide.text != null) ...[
                         const SizedBox(height: 16),

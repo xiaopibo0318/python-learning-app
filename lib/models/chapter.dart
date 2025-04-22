@@ -9,6 +9,7 @@ class HomeworkConfig {
 }
 
 class Chapter {
+  final String id;
   String title;
   bool isUnlocked;
   List<Content> contents;
@@ -16,6 +17,7 @@ class Chapter {
   HomeworkConfig? homeworkConfig; // ← 新增這個欄位，允許為 null
 
   Chapter({
+    required this.id,
     required this.title,
     this.isUnlocked = false,
     required this.contents,
