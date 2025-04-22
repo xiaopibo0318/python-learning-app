@@ -1,9 +1,9 @@
 // 📁 lib/screens/home/home_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:apcs_app/data/chapter_registry.dart';
 import 'package:apcs_app/models/chapter.dart';
-import 'package:apcs_app/screens/chapter/chapter_screen.dart';
+import '../../services/firestore_service.dart';
+import '../chapter/chapter_content_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,31 +18,57 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _chaptersFuture = ChapterRegistry.loadAllChapters();
+    _chaptersFuture = FirestoreService.fetchChapters();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '從 0 開始學 Python',
-          style: TextStyle(fontFamily: 'GenSen', fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Python 學習 App')),
       body: FutureBuilder<List<Chapter>>(
         future: _chaptersFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('❌ 載入失敗：${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('目前尚無章節'));
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('錯誤：${snapshot.error}'));
           }
 
-          final chapters = snapshot.data!;
-          return ChapterScreen(chapters: chapters);
+          final chapters = snapshot.data ?? [];
+
+          return ListView.builder(
+            itemCount: chapters.length,
+            itemBuilder: (context, index) {
+              final chapter = chapters[index];
+              return ListTile(
+                title: Text(chapter.title),
+                leading: Icon(
+                  chapter.isUnlocked ? Icons.lock_open : Icons.lock,
+                  color: chapter.isUnlocked ? Colors.green : Colors.grey,
+                ),
+                onTap:
+                    chapter.isUnlocked
+                        ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => ChapterContentPage(
+                                    chapter: chapter,
+                                    onPassed: () {
+                                      setState(() {
+                                        chapter.isUnlocked = true;
+                                      });
+                                    },
+                                  ),
+                            ),
+                          );
+                        }
+                        : null,
+              );
+            },
+          );
         },
       ),
     );

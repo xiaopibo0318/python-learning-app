@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "79107251002",
+    "project_id": "pythonlearningapp-b0edb",
+    "storage_bucket": "pythonlearningapp-b0edb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79107251002:android:11ce9854b2318d75cd4e03",
+        "android_client_info": {
+          "package_name": "com.example.apcs_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhf8FyEGFBs5hKe0UUVqg6c8RF725L7RE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

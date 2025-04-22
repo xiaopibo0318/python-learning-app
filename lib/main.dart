@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'utils/logger.dart';
 import 'screens/home/home_screen.dart'; // ✅ 匯入新 Home 畫面
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; // Firebase CLI 會產生這個檔案
 
-void main() {
+void main() async {
   AppLogger.init();
+  WidgetsFlutterBinding.ensureInitialized(); // 初始化綁定
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const APCSApp());
 }
 

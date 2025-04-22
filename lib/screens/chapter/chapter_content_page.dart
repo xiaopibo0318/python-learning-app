@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/chapter.dart';
-import '../quiz/quiz_screen.dart';
-import '../chapter/presentation_page.dart';
-import '../../data/content_registry.dart';
+import '../../widgets/chapter_content_tile.dart';
+import '../../widgets/homework_tile.dart';
+import '../../widgets/quiz_button.dart';
 
 class ChapterContentPage extends StatelessWidget {
   final Chapter chapter;
@@ -16,109 +16,21 @@ class ChapterContentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final titleSize = screenWidth < 400 ? 16.0 : 18.0;
-    final descSize = screenWidth < 400 ? 14.0 : 16.0;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          chapter.title,
-          style: const TextStyle(
-            fontFamily: 'GenSen',
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: ListView.separated(
+      appBar: AppBar(title: Text(chapter.title)),
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        itemCount: chapter.contents.length + 1, // 最後一個是測驗按鈕
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          if (index < chapter.contents.length) {
-            final item = chapter.contents[index];
-            return MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  final slides = ContentRegistry.getSlides(item.topic);
-                  if (slides.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('⚠️ ${item.topic} 尚未設定內容')),
-                    );
-                    return;
-                  }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => PresentationPage(
-                            title: item.topic,
-                            slides: slides,
-                          ),
-                    ),
-                  );
-                },
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    title: Text(
-                      item.topic,
-                      style: TextStyle(
-                        fontFamily: 'GenSen',
-                        fontWeight: FontWeight.bold,
-                        fontSize: titleSize,
-                      ),
-                    ),
-                    subtitle: Text(
-                      item.description,
-                      style: TextStyle(
-                        fontFamily: 'GenSen',
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w500,
-                        fontSize: descSize,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          // 最後一個是按鈕
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => QuizScreen(
-                            chapterTitle: chapter.title,
-                            questions: chapter.questions,
-                            onPassed: () {
-                              onPassed(); // 通知外部解鎖下一章
-                            },
-                          ),
-                    ),
-                  );
-                },
-                child: const Text('開始測驗'),
-              ),
-            ),
-          );
-        },
+        children: [
+          ...chapter.contents.map((c) => ChapterContentTile(content: c)),
+          const SizedBox(height: 20),
+          HomeworkTile(chapterTitle: chapter.title),
+          const SizedBox(height: 30),
+          QuizButton(
+            chapterTitle: chapter.title,
+            questions: chapter.questions,
+            onPassed: onPassed,
+          ),
+        ],
       ),
     );
   }
