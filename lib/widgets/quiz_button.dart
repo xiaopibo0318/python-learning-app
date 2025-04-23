@@ -4,12 +4,14 @@ import '../screens/quiz/quiz_screen.dart';
 
 class QuizButton extends StatelessWidget {
   final String chapterTitle;
+  final String chapterID;
   final List<Question> questions;
   final VoidCallback onPassed;
 
   const QuizButton({
     super.key,
     required this.chapterTitle,
+    required this.chapterID,
     required this.questions,
     required this.onPassed,
   });
@@ -25,6 +27,7 @@ class QuizButton extends StatelessWidget {
               builder:
                   (_) => QuizScreen(
                     chapterTitle: chapterTitle,
+                    chapterID: chapterID,
                     questions: questions,
                     onPassed: onPassed,
                   ),

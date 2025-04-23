@@ -3,14 +3,18 @@
 import 'package:flutter/material.dart';
 import '../../models/question.dart';
 import 'result_dialog.dart';
+import '../../services/firestore_service.dart';
+import '../../utils/logger.dart';
 
 class QuizScreen extends StatefulWidget {
   final String chapterTitle;
+  final String chapterID;
   final List<Question> questions;
   final VoidCallback onPassed;
 
   const QuizScreen({
     super.key,
+    required this.chapterID,
     required this.chapterTitle,
     required this.questions,
     required this.onPassed,
@@ -18,6 +22,19 @@ class QuizScreen extends StatefulWidget {
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
+}
+
+// 解鎖下一章節的邏輯
+Future<void> _unlockNextChapter(BuildContext context, String chapterId) async {
+  try {
+    // 在 Firestore 中更新章節的狀態為已解鎖 # 下一章節
+    await FirestoreService.unlockChapter(int.parse(chapterId) + 1);
+  } catch (e) {
+    AppLogger.chapter.severe('解鎖章節失敗: $e');
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('❌ 解鎖章節失敗')));
+  }
 }
 
 class _QuizScreenState extends State<QuizScreen> {
@@ -46,7 +63,11 @@ class _QuizScreenState extends State<QuizScreen> {
         });
       } else {
         final passed = score == widget.questions.length; // ✅ 必須全對
-        if (passed) widget.onPassed();
+        if (passed) {
+          widget.onPassed();
+          _unlockNextChapter(context, widget.chapterID);
+        }
+        ;
 
         showDialog(
           context: context,

@@ -47,11 +47,14 @@ class FirestoreService {
   }
 
   //讀取PresentationPage
-  static Future<List<SlideContent>> fetchSlides(String topic) async {
+  static Future<List<SlideContent>> fetchSlides(
+    String chapterId,
+    String topic,
+  ) async {
     final snapshot =
         await FirebaseFirestore.instance
             .collection('chapters')
-            .doc('ch1')
+            .doc('ch${chapterId}')
             .collection('contents')
             .where('topic', isEqualTo: topic)
             .limit(1)
@@ -97,5 +100,18 @@ class FirestoreService {
         imageAsset: data['imageAsset'] ?? '',
       );
     }).toList();
+  }
+
+  // 更新章節解鎖狀態
+  static Future<void> unlockChapter(int chapterId) async {
+    try {
+      // 假設你的章節 ID 是數字，這裡是更新章節的解鎖狀態
+      await _db.collection('chapters').doc('ch$chapterId').update({
+        'unlocked': true, // 將該章節的 unlocked 設為 true
+      });
+      AppLogger.chapter.info('解鎖第 $chapterId 章');
+    } catch (e) {
+      AppLogger.chapter.severe('解鎖第 $chapterId 章失敗: $e');
+    }
   }
 }

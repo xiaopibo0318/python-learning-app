@@ -51,7 +51,6 @@ class ChapterScreen extends StatelessWidget {
                               (_) => ChapterContentPage(
                                 chapter: chapter,
                                 onPassed: () {
-                                  // TODO: 解鎖下一章節
                                   AppLogger.chapter.info(
                                     '🎉 完成章節 ${chapter.title}',
                                   );

@@ -32,7 +32,7 @@ class ChapterContentPage extends StatelessWidget {
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: chapter.contents.length + 2,
+        itemCount: chapter.contents.length + 2, // 動態生成內容 + 作業 + 測驗按鈕
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           if (index < chapter.contents.length) {
@@ -42,6 +42,7 @@ class ChapterContentPage extends StatelessWidget {
               onTap: () async {
                 AppLogger.chapter.info('讀取 topic：${contentItem.topic}');
                 final slides = await FirestoreService.fetchSlides(
+                  chapter.id,
                   contentItem.topic,
                 );
 
@@ -99,6 +100,7 @@ class ChapterContentPage extends StatelessWidget {
 
           return QuizButton(
             chapterTitle: chapter.title,
+            chapterID: chapter.id,
             questions: chapter.questions,
             onPassed: onPassed,
           );
